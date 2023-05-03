@@ -1,1 +1,1 @@
-# labyrinth.github.io
+# maze.github.io
