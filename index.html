@@ -1,221 +1,292 @@
-
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>티처블머신 테스트</title>
+        <script>
+            // 타이머 초기화
+            var timeLeft = 5 * 60; // 5분
+            var timer = setInterval(function() {
+              var minutes = Math.floor(timeLeft / 60); // 분
+              var seconds = timeLeft % 60; // 초
+              var timeString = minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+              document.getElementById('timeLeft').innerHTML = timeString;
+              timeLeft--;
+              if (timeLeft < 0) {
+                clearInterval(timer);
+                alert('Time is up!');
+                // 게임 종료 처리
+              }
+            }, 1000); // 1초마다 타이머 실행
+        </script>
+        </head>
+        <body>
+          <h1>미로탈출</h1>
+          <p>남은 시간: <span id="timeLeft">5:00</span></p>
+          <h2>점수: <span id="score">0</span></p></h2>
+        </body>
+        <script>
+            var poseAction = 4; // 포즈 Class 번호 0~3 , 4는 초기설정 및 다른 자세
+     
+            
+            function loaded(){ // 
+                //1000ms 마다 inputFunction()를 다시 호출
+                
+                setInterval(function() {inputFunction(poseAction);}, 1000);//1초에 1번 호출
 
-<head>
-    <meta charset="UTF-8">
-    <title>예제</title>
+                setInterval(function(){console.log("현재 poseAction은 " + poseAction + "입니다.")},1000);
+            }
 
-    <script src="js/jquery.min.js"></script>
+            var map=[
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1,1,0,2],
+        [1,0,1,1,1,1,1,1,1,1,0,0,1,0,1],
+        [1,0,1,0,0,0,0,0,0,1,1,0,1,0,1],
+        [1,0,1,0,1,1,1,1,0,1,0,0,1,0,1],
+        [1,0,1,0,1,1,0,0,0,1,0,1,1,0,1],
+        [1,0,1,0,1,0,0,1,0,1,0,0,1,0,1],
+        [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+        [1,0,0,0,1,0,0,0,1,0,0,0,1,0,1],
+        [1,1,1,1,1,0,1,0,1,1,0,1,1,0,1],
+        [1,4,0,4,1,0,1,0,1,1,0,0,1,0,1],
+        [1,0,1,0,1,0,1,0,0,1,1,0,1,0,1],
+        [1,0,1,0,1,1,1,1,0,1,1,0,1,0,1],
+        [1,3,1,0,0,0,0,0,0,1,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
+    var score = 0;
+    
+    function Board(){
+        for(var i=0; i<15; i++){
+            document.write("<table bgcolor='white' border='1'><tr>");
+                for(var j=0; j<15; j++){
+                    +document.write("<td id=x"+i+"y"+j+" width='15' height='15'></td>");
+                }    
+                document.write("</tr></table>");
+        }
+    }
+    
+    Board();
+    
+    function ChangeColor(x,y,color){
+        document.getElementById("x"+x+"y"+y+"").bgColor=color;
+    }
+    
+    function drawmaze(){
+        for(var i=0; i<15; i++){
+            for(var j=0; j<15; j++){
+                if(map[i][j]==1){
+                    ChangeColor(i,j,"#980000"); //벽돌
+                }
+                else if(map[i][j]==2){
+                    ChangeColor(i,j,"#FFFF48"); //출구
+                }
+                else if(map[i][j]==3){                    
+                    ChangeColor(i,j,"#90E4FF");
+                    document.getElementById("x"+i+"y"+j)
+                }
+                else if(map[i][j]==0){
+                    ChangeColor(i,j,"white");
+                    document.getElementById("x"+i+"y"+j)
+                }
+                else if(map[i][j]==4){
+                    ChangeColor(i,j,"#00fff3"); //점수 흭득용 아이템
+                    document.getElementById("score").innerHTML = score;
+                }
+            }
+        }
+    }
+    function erase(){
+        for(var i=0; i<15; i++){
+            for(var j=0; j<15; j++){
+                ChangeColor(i,j,"white");
+            }
+        }
+    }
+    
+    drawmaze();    
+    
+    var nowX=13;
+    var nowY=1;
+    
+    function inputFunction(action){        
+        switch(action){
+            case 0://up
+                map[nowX][nowY]=0;
+                nowX--;
+                if(map[nowX][nowY]==4){
+                    //점수 늘리기
+                    map[nowX][nowY]=0;
+                    score+=10;
+                    document.getElementById("score").innerHTML = score;
+                }            
+                if(map[nowX][nowY]==1){
+                    nowX++;
+                }
+                map[nowX][nowY]=3;
+                break;
+            case 2://right
+                map[nowX][nowY]=0
+                nowY++;
+                if(map[nowX][nowY]==4){
+                    //점수 늘리기
+                    map[nowX][nowY]=0;
+                    score+=10;
+                    document.getElementById("score").innerHTML = score;
+                }   
+                if(map[nowX][nowY]==1){
+                    nowY--;
+                }
+                else if(map[nowX][nowY]==2){
+                    alert("축하합니다! 클리어하셨습니다.")
+                }
+                map[nowX][nowY]=3;
+                break;
+            break;
+            case 3://left
+                map[nowX][nowY]=0;
+                nowY--;
+                if(map[nowX][nowY]==4){
+                    //점수 늘리기
+                    map[nowX][nowY]=0;
+                    score+=10;
+                    document.getElementById("score").innerHTML = score;
+                }   
+                if(map[nowX][nowY]==1){
+                    nowY++;
+                }
+                map[nowX][nowY]=3;
+                break;
+            break;
+            case 1://down
+                map[nowX][nowY]=0;
+                nowX++;
+                if(map[nowX][nowY]==4){
+                    //점수 늘리기
+                    map[nowX][nowY]=0;
+                    score+=10;
+                    document.getElementById("score").innerHTML = score;
+                }   
+                if(map[nowX][nowY]==1){
+                    nowX--;
+                }
+                map[nowX][nowY]=3;
+                break;
+            break;
+        }
+        console.log("이동하는 함수 호출")
+        erase();
+        drawmaze();
+        
+    };
+    
+    
+            
 
-    <script>
-        var x = 0;
-        var y = 0;
-        var map_text = "";
+        </script>
+    </head>
 
-        var map = new Array();
-        var is_duplicate = false;
+    <body onload="loaded()" onload="inputFunction()">
+        
+        <div>포즈를 통해 이동하세요!</div>
+<button type="button" onclick="init()">Start</button>
+<div><canvas id="canvas"></canvas></div>
+<div id="label-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+<script type="text/javascript">
+    // More API functions here:
+    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
 
-        // 10x10 2차원 배열 만들기
-        for (var i = 0; i <= 10; i++) {
-            map[i] = new Array();
+    // the link to your model provided by Teachable Machine export panel
+    const URL = "./my_model/";
+    let model, webcam, ctx, labelContainer, maxPredictions;
+
+    async function init() {
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+
+        // load the model and metadata
+        // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+        // Note: the pose library adds a tmPose object to your window (window.tmPose)
+        model = await tmPose.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+
+        // Convenience function to setup a webcam
+        const size = 200;
+        const flip = true; // whether to flip the webcam
+        webcam = new tmPose.Webcam(size, size, flip); // width, height, flip
+        await webcam.setup(); // request access to the webcam
+        await webcam.play();
+        window.requestAnimationFrame(loop);
+
+        // append/get elements to the DOM
+        const canvas = document.getElementById("canvas");
+        canvas.width = size; canvas.height = size;
+        ctx = canvas.getContext("2d");
+        labelContainer = document.getElementById("label-container");
+        for (let i = 0; i < maxPredictions; i++) { // and class labels
+            labelContainer.appendChild(document.createElement("div"));
+        }
+    }
+
+    async function loop(timestamp) {
+        webcam.update(); // update the webcam frame
+        await predict();
+        window.requestAnimationFrame(loop);
+    }
+
+    async function predict() {
+        // Prediction #1: run input through posenet
+        // estimatePose can take in an image, video or canvas html element
+        const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+        // Prediction 2: run input through teachable machine classification model
+        const prediction = await model.predict(posenetOutput);
+
+        for (let i = 0; i < maxPredictions; i++) {
+            const classPrediction =
+                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            labelContainer.childNodes[i].innerHTML = classPrediction;
+        }
+        
+        if(prediction[0].probability > 0.9){
+            poseAction = 0
+            
+        }
+        else if(prediction[1].probability > 0.9){
+            poseAction = 1
+            
+        }
+        else if(prediction[2].probability > 0.9){
+            poseAction = 2
+            
+        }
+        else if(prediction[3].probability > 0.9){
+            poseAction = 3
+            
+        }
+        else{
+            poseAction = 4
         }
 
-        $(function () {
-            set_map();
+        // finally draw the poses
+        drawPose(pose);
+    }
+    
 
-            $(document).on("keydown", keyEventFnc);
-
-            // e : 이벤트 객체, 여기서는 키가 눌린 정보를 저장함
-            // 2차원 배열에서 좌표를 생각해보면
-            // x는 행, y는 열에 해당
-            // 밑으로 갈 수록 y 증가
-            // 위로 갈 수록 y 감소
-            function keyEventFnc(e) {
-                var direct = "";
-
-                switch (e.keyCode) {
-                    case 37:
-                        direct = "LEFT";
-                        if (check_x(direct)) {
-                            map[y][x] = "□";
-                            x--;
-                        }
-                        break;
-
-                    case 38:
-                        direct = "TOP";
-                        if (check_y(direct)) {
-                            map[y][x] = "□";
-                            y--;
-                        }
-                        break;
-
-                    case 39:
-                        direct = "RIGHT";
-                        if (check_x(direct)) {
-                            map[y][x] = "□";
-                            x++;
-                        }
-                        break;
-
-                    case 40:
-                        direct = "BOTTOM";
-                        if (check_y(direct)) {
-                            map[y][x] = "□";
-                            y++;
-                        }
-                        break;
-                }
-
-                if (direct) {
-                    $("#user_id").val(direct);
-                }
-
-                map[y][x] = "■";
-
-                // 이동한 위치에 따라 맵을 그림
-                draw();
+    function drawPose(pose) {
+        if (webcam.canvas) {
+            ctx.drawImage(webcam.canvas, 0, 0);
+            // draw the keypoints and skeleton
+            if (pose) {
+                const minPartConfidence = 0.5;
+                tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+                tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
             }
-
-            function draw() {
-                map_text = "";
-
-                for (var i = 0; i <= 10; i++) {
-                    for (var j = 0; j <= 10; j++) {
-                        map_text += map[i][j] + " ";
-                    }
-                    map_text += "<br>";
-                }
-
-                document.getElementById("location").innerHTML = ("[현재 좌표]<br>x:" + x + " y:" + y);
-                document.getElementById("map").innerHTML = map_text;
-            }
-
-            function check_x(direct) {
-                if (direct == "LEFT") {
-                    if (x - 1 < 0) {
-                        return false;
-                    }
-                    else {
-                        if (map[y][x - 1] != "벽" && map[y][x - 1] != "★") {
-                            return true;
-                        }
-                        else if (map[y][x + 1] == "★") {
-                            clear();
-                        }
-                    }
-                }
-                else if (direct == "RIGHT") {
-                    if (x + 1 > 10) {
-                        return false;
-                    }
-                    else {
-                        if (map[y][x + 1] != "벽" && map[y][x + 1] != "★") {
-                            return true;
-                        }
-                        else if (map[y][x + 1] == "★") {
-                            clear();
-                        }
-                    }
-                }
-            }
-
-            function check_y(direct) {
-                if (direct == "TOP") {
-                    if (y - 1 < 0) {
-                        return false;
-                    }
-                    else {
-                        if (map[y - 1][x] != "벽" && map[y - 1][x] != "★") {
-                            return true;
-                        }
-                        else if (map[y - 1][x] == "★") {
-                            clear();
-                        }
-                    }
-                }
-                else if (direct == "BOTTOM") {
-                    if (y + 1 > 10) {
-                        return false;
-                    }
-                    else {
-                        if (map[y + 1][x] != "벽" && map[y + 1][x] != "★") {
-                            return true;
-                        }
-                        else if (map[y + 1][x] == "★") {
-                            clear();
-                        }
-                    }
-                }
-            }
-
-            function set_map() {
-                document.getElementById("location").innerHTML = "The Maze";
-                document.getElementById("map").innerHTML = "Press any key to start.";
-
-                // 좌표 및 화면 표시 위치 초기화
-                map[y][x] = "□";
-                x = 0;
-                y = 0;
-
-                // 맵을 초기화
-                for (var i = 0; i <= 10; i++) {
-                    for (var j = 0; j <= 10; j++) {
-                        map[i][j] = "□";
-                    }
-                }
-                map[10][10] = "★";
-
-                // 벽 만들기
-                for (var i = 0; i < 20; i++) {
-                    var location_x = Math.floor(Math.random() * 9) + 0;
-                    var location_y = Math.floor(Math.random() * 9) + 0;
-
-                    map[location_y][location_x] = "벽";
-                }
-            }
-
-            function clear() {
-                alert("도착!");
-                set_map();
-            }
-        })
-    </script>
-
-    <style>
-        * {
-            margin: 0 auto;
         }
+    }
+</script>
 
-        #location {
-            width: 250px;
-            height: 47px;
-            background-color: cyan;
-            border-radius: 10px;
-            font-weight: bold;
-            text-align: center;
 
-            margin-top: 10px;
-            padding-top: 3px;
-        }
-
-        #map {
-            width: 240px;
-            height: 240px;
-            background-color: palegreen;
-            border-radius: 10px;
-            font-weight: bold;
-
-            margin-top: 10px;
-            padding-left: 10px;
-        }
-    </style>
-</head>
-
-<body>
-    <div id="location"></div>
-    <div id="map"></div>
-</body>
-
+    </body>
 </html>
